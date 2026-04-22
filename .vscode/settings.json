@@ -1,0 +1,6 @@
+{
+  "java.project.outputPath": ".jdt/bin",
+  "java.project.sourcePaths": [
+    "assets/tomcat-embed-core-11.0.21-sources"
+  ]
+}

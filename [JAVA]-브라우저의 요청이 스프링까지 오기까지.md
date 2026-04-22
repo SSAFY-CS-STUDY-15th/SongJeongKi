@@ -197,7 +197,7 @@ Coyote가 HTTP 요청을 읽고 해석했다고 해서, 그 요청이 곧바로 
 
 이 경계를 담당하는 핵심 클래스가 다음이다.
 
-- [org.apache.catalina.connector.CoyoteAdapter](./assets/CoyoteAdapter.java)
+- [org.apache.catalina.connector.CoyoteAdapter](./assets/tomcat-embed-core-11.0.21-sources/org/apache/catalina/connector/CoyoteAdapter.java)
 
 이 클래스는 이름 그대로 **Coyote와 Catalina 사이를 연결하는 어댑터** 역할을 한다.  
 앞단의 Coyote가 HTTP 프로토콜을 처리했다면, 이제부터는 Catalina가 그 결과를 웹 애플리케이션 처리 흐름으로 이어받는다.
