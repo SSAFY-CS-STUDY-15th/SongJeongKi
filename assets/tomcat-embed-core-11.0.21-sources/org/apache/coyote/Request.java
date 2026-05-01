@@ -832,6 +832,10 @@ public final class Request {
          * Trailer fields are limited in size by bytes. The following call ensures that any request with a large number
          * of small trailer fields doesn't result in a long lasting, large array of headers inside the MimeHeader
          * instance.
+         * 
+         * Trailer fields는 바이트 단위로 크기가 제한된다.
+         * 아래 호출은 작은 Trailer field가 매우 많이 포함된 요청이 들어오더라도,
+         * MimeHeader 인스턴스 내부에 오래 유지되는 큰 헤더 배열이 생기지 않도록 보장한다.
          */
         trailerFields.setLimit(MimeHeaders.DEFAULT_HEADER_SIZE);
         serverNameMB.recycle();
@@ -850,6 +854,12 @@ public final class Request {
         // trigger a change in the request ID until a new request has been
         // started. Use startTimeNanos to detect when a request has started so a
         // subsequent call to recycle() will trigger a change in the request ID.
+        /* 
+         * recycle이 여러 번 호출될 수 있지만, 
+         * 새 요청이 시작되기 전까지는 첫 번째 recycle 호출만 request ID 변경을 트리거해야 한다.
+         * 요청이 시작되었는지 감지하기 위해 startTimeNanos를 사용한다.
+         * 그래야 이후 recycle() 호출이 request ID 변경을 다시 트리거할 수 있다.
+         */
         if (startTimeNanos != -1) {
             requestId = Long.toHexString(requestIdGenerator.getAndIncrement());
         }
@@ -888,6 +898,9 @@ public final class Request {
             /*
              * No requirement to maintain state between requests so clear the hook (a.k.a. Processor) and the input
              * buffer to aid GC.
+             * 
+             * 요청 간에 상태를 유지할 필요가 없으므로,
+             * GC를 돕기 위해 hook, 즉 Processor와 input buffer를 비운다.
              */
             setHook(null);
             setInputBuffer(null);
