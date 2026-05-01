@@ -272,8 +272,8 @@ Engine 단계의 핵심:
 
 예를 들어 다음 요청이 있다고 하자.
 
-GET /hello HTTP/1.1
-Host: localhost:8080
+- GET /hello HTTP/1.1
+- Host: localhost:8080
 
 이 요청의 Host 헤더를 기준으로 Catalina는 어떤 가상 호스트가 이 요청을 처리할지 결정한다.
 
@@ -429,7 +429,7 @@ ApplicationFilterChain은 현재 요청 URL과 Servlet Mapping에 맞는 필터�
 
 그리고 최종 Servlet이 DispatcherServlet이라면 실행 구조는 다음과 같다.
 ```
-ApplicationFilterChain.doFilter()
+ApplicationFilterChain.doFilter()GET /hello HTTP/1.1
     ↓
 LoggingFilter.doFilter()
     ↓
