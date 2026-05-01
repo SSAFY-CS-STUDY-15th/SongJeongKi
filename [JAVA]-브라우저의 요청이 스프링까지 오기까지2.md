@@ -288,9 +288,9 @@ Host는 가상 호스트 단위 컨테이너다.
 
 예를 들어 다음과 같은 도메인을 생각할 수 있다.
 
-www.example.com
-admin.example.com
-api.example.com
+- www.example.com
+- admin.example.com
+- api.example.com
 
 각 도메인이 서로 다른 웹 애플리케이션 구성을 가질 수 있다.
 
@@ -305,14 +305,14 @@ Context Pipeline
 여기서 Context는 웹 애플리케이션 하나를 의미한다.
 
 예를 들어 다음과 같이 배포되어 있다고 하자.
-
+```
 /       → ROOT 애플리케이션
 /app    → app 애플리케이션
 /admin  → admin 애플리케이션
-
+```
 요청 URI가 다음이라면
 
-/app/users/1
+`/app/users/1`
 
 Tomcat은 /app Context를 선택한다.
 
@@ -339,7 +339,7 @@ Wrapper Pipeline
 
 예를 들어 Spring MVC 애플리케이션에서는 보통 DispatcherServlet이 다음과 같이 매핑된다.
 
-/
+`/`
 
 또는 전통적인 web.xml 기반 애플리케이션에서는 다음처럼 특정 경로에 매핑될 수도 있다.
 ```
@@ -367,7 +367,7 @@ org.springframework.web.servlet.DispatcherServlet
 
 Wrapper 단계의 핵심 클래스는 다음이다.
 
-org.apache.catalina.core.StandardWrapperValve
+`org.apache.catalina.core.StandardWrapperValve`
 
 이 단계에서 중요한 일이 일어난다.
 
@@ -378,7 +378,7 @@ org.apache.catalina.core.StandardWrapperValve
 5. 최종적으로 Servlet.service()를 호출한다.
 
 흐름은 다음과 같다.
-
+```
 StandardWrapperValve.invoke()
     ↓
 ApplicationFilterFactory.createFilterChain()
@@ -388,7 +388,7 @@ ApplicationFilterChain.doFilter()
 Filter.doFilter()
     ↓
 Servlet.service()
-
+```
 여기서 드디어 우리가 알고 있는 서블릿 실행 흐름으로 들어간다.
 
 ---
@@ -423,9 +423,9 @@ ApplicationFilterChain은 현재 요청 URL과 Servlet Mapping에 맞는 필터�
 
 예를 들어 다음 필터들이 있다고 하자.
 
-LoggingFilter
-SecurityFilter
-EncodingFilter
+- LoggingFilter
+- SecurityFilter
+- EncodingFilter
 
 그리고 최종 Servlet이 DispatcherServlet이라면 실행 구조는 다음과 같다.
 ```
@@ -441,7 +441,7 @@ DispatcherServlet.service()
 ```
 필터는 다음처럼 다음 단계 호출 여부를 직접 결정한다.
 
-chain.doFilter(request, response);
+`chain.doFilter(request, response);`
 
 이 호출을 하지 않으면 뒤의 필터나 Servlet은 실행되지 않는다.
 
@@ -452,7 +452,7 @@ if (!authenticated) {
     return;
 }
 ```
-chain.doFilter(request, response);
+`chain.doFilter(request, response);`
 
 이 경우 DispatcherServlet까지 요청이 도달하지 않는다.
 
@@ -493,10 +493,10 @@ Tomcat은 요청을 Servlet 표준에 맞춰 DispatcherServlet.service()까지 �
 
 정리하면 다음과 같다.
 
-Tomcat의 책임:
-HTTP 요청을 파싱하고, 서블릿 컨테이너 구조를 따라 적절한 Servlet.service()를 호출한다.
-Spring MVC의 책임:
-DispatcherServlet 안에서 HandlerMapping, HandlerAdapter, Controller, ViewResolver 또는 HttpMessageConverter 흐름을 처리한다.
+- Tomcat의 책임:
+  - HTTP 요청을 파싱하고, 서블릿 컨테이너 구조를 따라 적절한 Servlet.service()를 호출한다.
+- Spring MVC의 책임:
+  - DispatcherServlet 안에서 HandlerMapping, HandlerAdapter, Controller, ViewResolver 또는 HttpMessageConverter 흐름을 처리한다.
 
 ---
 
@@ -596,14 +596,14 @@ executor.submit(() -> {
 요청 처리가 끝난 뒤 비동기 스레드에서 request에 접근하면 이미 recycle된 상태일 수 있다.
 
 안전한 방식은 필요한 값만 복사하는 것이다.
-
+```
 String uri = request.getRequestURI();
 String method = request.getMethod();
 String traceId = request.getHeader("X-Trace-Id");
 executor.submit(() -> {
     log.info("method={}, uri={}, traceId={}", method, uri, traceId);
 });
-
+```
 요청 객체는 컨테이너가 관리하는 생명주기를 가진다.
 따라서 요청 생명주기 밖에서 필요하다면 객체 참조가 아니라 값 복사가 필요하다.
 
@@ -626,7 +626,7 @@ executor.submit(() -> {
 9. Spring MVC의 DispatcherServlet은 Tomcat 입장에서는 하나의 Servlet이다.
 10. DispatcherServlet 이후부터가 Spring MVC 내부 처리 흐름이다.
 
-결국 요청은 다음 순서로 변한다.
+최종 흐름 순서.
 ```
 네트워크 바이트 스트림
     ↓
