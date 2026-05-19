@@ -1,0 +1,16 @@
+services:
+  jvm:
+    build:
+      context: .
+      dockerfile: Dockerfile.jvm
+    image: test-for-aot:jvm
+    ports:
+      - "8080:8080"
+
+  native:
+    build:
+      context: .
+      dockerfile: Dockerfile.native
+    image: test-for-aot:native
+    ports:
+      - "8081:8080"

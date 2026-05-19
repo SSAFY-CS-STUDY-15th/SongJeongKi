@@ -1,0 +1,7 @@
+.gradle/
+build/
+out/
+*.log
+.DS_Store
+hs_err_pid*
+replay_pid*

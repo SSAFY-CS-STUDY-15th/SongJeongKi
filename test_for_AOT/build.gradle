@@ -1,0 +1,76 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.14'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.graalvm.buildtools.native' version '0.10.6' apply false
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+description = 'Spring Boot JVM vs AOT Native Image comparison lab'
+
+def aotMode = providers.gradleProperty('aot').isPresent()
+def nativeMode = providers.gradleProperty('native').isPresent()
+
+if (nativeMode) {
+    apply plugin: 'org.graalvm.buildtools.native'
+} else if (aotMode) {
+    apply plugin: 'org.springframework.boot.aot'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+    implementation 'org.apache.commons:commons-text:1.12.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+springBoot {
+    buildInfo()
+}
+
+if (nativeMode) {
+    graalvmNative {
+        binaries {
+            main {
+                imageName = 'aot-lab'
+                mainClass = 'com.example.aotlab.AotLabApplication'
+                javaLauncher = javaToolchains.launcherFor {
+                    languageVersion = JavaLanguageVersion.of(21)
+                    nativeImageCapable = true
+                }
+                buildArgs.add('--no-fallback')
+                buildArgs.add('-H:+ReportExceptionStackTraces')
+            }
+        }
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.register('printExperimentPaths') {
+    group = 'help'
+    description = 'Prints the JVM, AOT, and native image output paths used by this experiment.'
+    doLast {
+        println 'JVM jar:              build/libs/test-for-aot-0.0.1-SNAPSHOT.jar'
+        println 'AOT generated source: build/generated/aotSources'
+        println 'AOT generated hints:  build/generated/aotResources/META-INF/native-image'
+        println 'AOT generated class:  build/generated/aotClasses'
+        println 'Native executable:    build/native/nativeCompile/aot-lab'
+    }
+}

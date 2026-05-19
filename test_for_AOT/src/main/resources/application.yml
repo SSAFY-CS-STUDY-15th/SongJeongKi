@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: aot-lab
+  main:
+    lazy-initialization: false
+
+server:
+  port: 8080
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+catalog:
+  currency: KRW
+  preload-count: 750
+  cache-ttl-seconds: 60
+  featured-ratio: 7
+  categories:
+    - keyboard
+    - mouse
+    - monitor
+    - laptop
+    - storage
+    - cable
